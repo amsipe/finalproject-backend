@@ -12,7 +12,12 @@ var connection = mysql.createConnection({
 
 var app = express();
 app.use(bodyParser.json());
-
+app.use((req,res,next) => {
+    res.header('Access-Control-Allow-Origin',"*");
+    res.header('Access-Control-Allow-Methods','GET,UPDATE,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+})
 app.get('/',(req,res) => {
     res.send('Hello World');
 })
@@ -88,6 +93,6 @@ app.delete('/orders/:id',(req,res) => {
     })
 })
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log('Server is up.')
 });
