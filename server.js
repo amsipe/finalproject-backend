@@ -4,9 +4,10 @@ var mysql = require('mysql');
 
 var connection = mysql.createConnection({
     host     : 'localhost',
-    socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
+    port     : 3306,
+    //socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
     user     : 'ita_finalproject',
-    password : '4c4WSSTtEvZJl5xu',
+    password : 'dTnbnjXpsFfqCf0S',
     database : 'ita_finalproject'
   });
 
