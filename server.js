@@ -3,12 +3,12 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    port     : 3306,
+    host     : 'mysql6.gear.host',
+    // port     : 3306,
     //socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
-    user     : 'ita_finalproject',
-    password : 'dTnbnjXpsFfqCf0S',
-    database : 'ita_finalproject'
+    user     : 'itafinalproject',
+    password : 'Kb55_K49-gMe',
+    database : 'itafinalproject'
   });
 
 var app = express();
