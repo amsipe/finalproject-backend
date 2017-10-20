@@ -47,7 +47,13 @@ app.get('/orders',(req,res) => {
 
 app.get('/orders/:id',(req,res) => {
     //TODO: update response data to include a promise
-    var sqlString = 'SELECT * FROM orders_details WHERE OrderID = ?;'
+    var sqlString = `
+    SELECT 
+    OD.*,
+    P.Name
+    FROM itafinalproject.orders_details OD
+    left join itafinalproject.products P using (ProductID)
+     WHERE OrderID = ?;`
     connection.query(sqlString,[req.params.id],(error,results,fields) => {
             if(error) {
                 res.send(error);
