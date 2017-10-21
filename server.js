@@ -8,14 +8,15 @@ var connection = mysql.createConnection({
     //socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
     user     : 'itafinalproject',
     password : 'Kb55_K49-gMe',
-    database : 'itafinalproject'
+    database : 'itafinalproject',
+    multipleStatements: true //allowing mutliple update statements
   });
 
 var app = express();
 app.use(bodyParser.json());
 app.use((req,res,next) => {
     res.header('Access-Control-Allow-Origin',"*");
-    res.header('Access-Control-Allow-Methods','GET,UPDATE,POST,DELETE');
+    res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 })
@@ -97,6 +98,44 @@ app.delete('/orders/:id',(req,res) => {
             res.send(error);
         }
         res.send(results);
+    })
+})
+
+app.put('/orders', (req,res) => {
+    //TODO: find a better way to handle this update process
+    console.log(req.body);
+    var updateSql = '';
+    req.body.items.forEach((item) => {
+       updateSql += 
+       `UPDATE \`orders_details\` SET \`Quantity\` = '${item.Quantity}' WHERE \`orders_details\`.\`OrderDetailID\` = ${item.OrderDetailID};` 
+    });
+
+    connection.query(updateSql,(error,results,fields) => {
+        if(error){
+            res.send(error)
+        } else {
+            var orderDetailIds = req.body.items.map((item) => {
+                return item.OrderDetailID;
+            })
+            //console.log(orderDetailIds);
+            var deleteSql = 
+            `DELETE FROM \`orders_details\` 
+            WHERE 
+            \`orders_details\`.\`OrderID\` = ${req.body.orderId}
+            AND \`orders_details\`.\`OrderDetailID\` NOT IN (${orderDetailIds})`;
+            console.log(deleteSql);
+            connection.query(deleteSql,(error,results,fields) => {
+                if(error){
+                    res.send(error);
+                    console.log(error);
+                } else {
+                    res.send(results);
+                    console.log(results);
+                }
+            })
+            
+            
+        }
     })
 })
 
