@@ -46,6 +46,16 @@ app.get('/orders',(req,res) => {
         })
 })
 
+app.get('/categories',(req,res) => {
+    var sqlString = 'SELECT * FROM categories'
+    connection.query(sqlString,(error,results,fields) => {
+            if(error) {
+                res.send(error);
+            } 
+            res.send(results);
+        })
+});
+
 app.get('/orders/:id',(req,res) => {
     //TODO: update response data to include a promise
     var sqlString = `
@@ -64,7 +74,7 @@ app.get('/orders/:id',(req,res) => {
 })
 
 app.post('/orders',(req,res) => {
-    
+   // console.log(req.body);
     //TODO: replace sql variable names
     //TODO: update response data to include a promise
     var sqlString = "INSERT INTO `orders` (`OrderTotal`, `CustomerID`) VALUES (?, ?);";
@@ -77,7 +87,7 @@ app.post('/orders',(req,res) => {
             connection.query(sqlString3,[
                 Array.from(req.body.items).map((item) => {
                     
-                    return [orderID,...item]
+                    return [orderID,item.ProductID,item.Quantity,item.Price]
                 })
             ],(error,results,fields) => {
                 if(error){
@@ -85,6 +95,24 @@ app.post('/orders',(req,res) => {
                 }
                 res.send(results);
             })
+        }
+        
+    })
+})
+
+app.post('/products',(req,res) => {
+    console.log(req.body);
+    var productSql = 
+    `INSERT INTO
+     \`products\` (\`Name\`, \`ImgURL\`, \`CategoryID\`, \`Price\`, \`Description\`)
+      VALUES ('${req.body.productName}', '${req.body.imgUrl}', '${req.body.categoryId}', '${req.body.price}', '${req.body.description}')`
+    connection.query(productSql,(error,results,fields) => {
+        if(error) {
+            console.log(error);
+            res.send(error);
+
+        } else {
+            res.send(results);
         }
         
     })
@@ -103,12 +131,19 @@ app.delete('/orders/:id',(req,res) => {
 
 app.put('/orders', (req,res) => {
     //TODO: find a better way to handle this update process
-    console.log(req.body);
+    console.log(JSON.stringify(req.body));
     var updateSql = '';
     req.body.items.forEach((item) => {
        updateSql += 
-       `UPDATE \`orders_details\` SET \`Quantity\` = '${item.Quantity}' WHERE \`orders_details\`.\`OrderDetailID\` = ${item.OrderDetailID};` 
+       `UPDATE \`orders_details\`
+        SET \`Quantity\` = '${item.Quantity}'
+         WHERE \`orders_details\`.\`OrderDetailID\` = ${item.OrderDetailID};` 
     });
+
+    updateSql += 
+    `UPDATE \`orders\`
+     SET \`OrderTotal\` = '${req.body.newTotal}' 
+     WHERE \`orders\`.\`OrderID\` = ${req.body.orderId};`
 
     connection.query(updateSql,(error,results,fields) => {
         if(error){
@@ -135,6 +170,28 @@ app.put('/orders', (req,res) => {
             })
             
             
+        }
+    })
+})
+
+app.put('/products',(req,res) => {
+    console.log(req.body);
+    var productUpdateSql = 
+        `UPDATE \`products\` 
+        SET 
+        \`Name\` = '${req.body.productName}', 
+        \`CategoryID\` = '${req.body.categoryId}',
+        \`Price\` = '${req.body.price}',
+        \`Description\` = '${req.body.description}'
+        WHERE 
+        \`products\`.\`ProductID\` = ${req.body.productId}`;
+    connection.query(productUpdateSql,(error,results,fields) => {
+        if(error){
+            console.log(error);
+            res.send(error)
+        } else {
+            console.log(results);
+            res.send(results);
         }
     })
 })
