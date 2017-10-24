@@ -20,9 +20,6 @@ app.use((req,res,next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 })
-app.get('/',(req,res) => {
-    res.send('Hello World');
-})
 
 app.get('/products',(req,res) => {
     //TODO: update response data to include a promise
@@ -74,7 +71,6 @@ app.get('/orders/:id',(req,res) => {
 })
 
 app.post('/orders',(req,res) => {
-   // console.log(req.body);
     //TODO: replace sql variable names
     //TODO: update response data to include a promise
     var sqlString = "INSERT INTO `orders` (`OrderTotal`, `CustomerID`) VALUES (?, ?);";
@@ -101,20 +97,16 @@ app.post('/orders',(req,res) => {
 })
 
 app.post('/products',(req,res) => {
-    console.log(req.body);
     var productSql = 
     `INSERT INTO
      \`products\` (\`Name\`, \`ImgURL\`, \`CategoryID\`, \`Price\`, \`Description\`)
       VALUES ('${req.body.productName}', '${req.body.imgUrl}', '${req.body.categoryId}', '${req.body.price}', '${req.body.description}')`
     connection.query(productSql,(error,results,fields) => {
         if(error) {
-            console.log(error);
             res.send(error);
-
         } else {
             res.send(results);
         }
-        
     })
 })
 
@@ -131,7 +123,6 @@ app.delete('/orders/:id',(req,res) => {
 
 app.put('/orders', (req,res) => {
     //TODO: find a better way to handle this update process
-    console.log(JSON.stringify(req.body));
     var updateSql = '';
     req.body.items.forEach((item) => {
        updateSql += 
@@ -152,20 +143,16 @@ app.put('/orders', (req,res) => {
             var orderDetailIds = req.body.items.map((item) => {
                 return item.OrderDetailID;
             })
-            //console.log(orderDetailIds);
             var deleteSql = 
             `DELETE FROM \`orders_details\` 
             WHERE 
             \`orders_details\`.\`OrderID\` = ${req.body.orderId}
             AND \`orders_details\`.\`OrderDetailID\` NOT IN (${orderDetailIds})`;
-            console.log(deleteSql);
             connection.query(deleteSql,(error,results,fields) => {
                 if(error){
                     res.send(error);
-                    console.log(error);
                 } else {
                     res.send(results);
-                    console.log(results);
                 }
             })
             
@@ -175,7 +162,6 @@ app.put('/orders', (req,res) => {
 })
 
 app.put('/products',(req,res) => {
-    console.log(req.body);
     var productUpdateSql = 
         `UPDATE \`products\` 
         SET 
@@ -187,10 +173,8 @@ app.put('/products',(req,res) => {
         \`products\`.\`ProductID\` = ${req.body.productId}`;
     connection.query(productUpdateSql,(error,results,fields) => {
         if(error){
-            console.log(error);
             res.send(error)
         } else {
-            console.log(results);
             res.send(results);
         }
     })
