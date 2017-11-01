@@ -7,7 +7,7 @@ var connection = mysql.createConnection({
     // port     : 3306,
     //socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
     user     : 'itafinalproject',
-    password : 'Kb55_K49-gMe',
+    password : 'Kb55_K49-gMe', //this is bad mkay
     database : 'itafinalproject',
     multipleStatements: true //allowing mutliple update statements
   });
@@ -192,6 +192,6 @@ app.put('/products',(req,res) => {
     })
 })
 
-app.listen(5000, () => {
+app.listen(80, () => {
     console.log('Server is up.')
 });
