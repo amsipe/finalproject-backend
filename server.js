@@ -12,6 +12,8 @@ var connection = mysql.createConnection({
     multipleStatements: true //allowing mutliple update statements
   });
 
+var port = process.env.PORT || 5000;
+
 var app = express();
 app.use(bodyParser.json());
 app.use((req,res,next) => {
@@ -192,6 +194,6 @@ app.put('/products',(req,res) => {
     })
 })
 
-app.listen(8080, () => {
-    console.log('Server is up.')
+app.listen(port, () => {
+    console.log('Server is up on port ' + port);
 });
